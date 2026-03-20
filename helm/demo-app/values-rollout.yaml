@@ -1,0 +1,6 @@
+rollout:
+  enabled: true
+  autoPromotionEnabled: false
+
+env:
+  appMessage: "Hello from Argo Rollouts"

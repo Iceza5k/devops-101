@@ -1,0 +1,46 @@
+nameOverride: ""
+fullnameOverride: ""
+
+replicaCount: 2
+
+image:
+  repository: devops101/demo-app
+  tag: "1.0.0"
+  pullPolicy: IfNotPresent
+
+containerPort: 3000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+env:
+  appMessage: "Hello from Helm"
+
+resources: {}
+
+podLabels: {}
+
+rollout:
+  enabled: false
+  autoPromotionEnabled: false
+  canary:
+    steps:
+      - setWeight: 25
+      - pause:
+          duration: 10s
+      - setWeight: 50
+      - pause:
+          duration: 10s
+      - setWeight: 100
+
+probes:
+  readiness:
+    path: /health
+    initialDelaySeconds: 3
+    periodSeconds: 5
+  liveness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 10
