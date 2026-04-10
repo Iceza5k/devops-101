@@ -1,4 +1,4 @@
-.PHONY: help docker-build docker-run docker-stop compose-up compose-down k8s-apply k8s-delete k8s-port-forward
+.PHONY: help docker-build docker-run docker-stop compose-up compose-down k8s-apply k8s-delete k8s-port-forward helm-template helm-install helm-template-rollout
 
 IMAGE_NAME=devops101/demo-app:1.0.0
 CONTAINER_NAME=devops101-demo-app
@@ -13,6 +13,9 @@ help:
 	@echo "  make k8s-apply          Apply Kubernetes manifests"
 	@echo "  make k8s-delete         Delete Kubernetes manifests"
 	@echo "  make k8s-port-forward   Forward Kubernetes service to localhost:8080"
+	@echo "  make helm-template      Render the default Helm chart"
+	@echo "  make helm-install       Install the default Helm chart"
+	@echo "  make helm-template-rollout Render the Argo Rollout Helm chart"
 
 docker-build:
 	docker build -t $(IMAGE_NAME) .
@@ -41,3 +44,12 @@ k8s-delete:
 
 k8s-port-forward:
 	kubectl port-forward -n devops-101 svc/demo-app-service 8080:80
+
+helm-template:
+	helm template demo-app ./helm/demo-app
+
+helm-install:
+	helm upgrade --install demo-app ./helm/demo-app -n devops-101 --create-namespace
+
+helm-template-rollout:
+	helm template demo-app ./helm/demo-app -f ./helm/demo-app/values-rollout.yaml
