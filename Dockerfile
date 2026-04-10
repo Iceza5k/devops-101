@@ -1,17 +1,17 @@
-FROM node:18-alpine AS builder
+FROM node:22-alpine
 
 WORKDIR /usr/src/app
 
-COPY app/package*.json ./
-RUN npm install --production --silent
+RUN apk update && apk upgrade --no-cache
 
-COPY app/server.js ./
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm
 
-FROM gcr.io/distroless/nodejs18-debian12
+ENV NODE_ENV=production
 
-WORKDIR /app
-COPY --from=builder /usr/src/app ./
+COPY /app/package.json /app/server.js ./
+
+USER node
 
 EXPOSE 3000
-USER nonroot
-CMD ["server.js"]
+
+CMD ["node", "server.js"]
